@@ -7,10 +7,25 @@
 # which accompanies this distribution, and is available at
 # http://www.eclipse.org/legal/epl-v20.html
 
+if [ -z "${ACE_SERVER_NAME}" ]; then
+  export ACE_SERVER_NAME=$(sed -e 's/[^a-zA-Z0-9._%/]//g' /proc/sys/kernel/hostname)
+fi
+
 log() {
   MSG=$1
   TIMESTAMP=$(date +%Y-%m-%dT%H:%M:%S.%3NZ%:z)
-  echo "${TIMESTAMP} ${MSG}"
+
+  if [ "${LOG_FORMAT}" == "json" ]; then
+    PID${$}
+    HOST=$(cat /proc/sys/kernel/hostname)
+    PROCESSNAME=$(cat /proc/$$/comm)
+    USERNAME=$(cat /proc/${PID}/loginuid)
+    ESCAPEDMSG=$(echo $MSG | sed -e 's/[\"]/\\&/g')
+    # TODO: loglevel
+    echo "{\"host\":\"${HOST}\",\"ibm_datetime\":\"${TIMESTAMP}\",\"ibm_processId\":\"${PID}\",\"ibm_processName\":\"${PROCESSNAME}\",\"ibm_serverName\":\"${ACE_SERVER_NAME}\",\"ibm_userName\":\"${USERNAME}\",\"message\":\"${ESCAPEDMSG}\",\"ibm_type\":\"ace_containerlog\"}"
+  else
+    echo "${TIMESTAMP} ${MSG}"
+  fi
 }
 
 # logAndExitIfError - if the return code given is 0 and the command outputed text, log it to stdout
