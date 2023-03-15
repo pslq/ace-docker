@@ -16,7 +16,7 @@ log() {
   TIMESTAMP=$(date +%Y-%m-%dT%H:%M:%S.%3NZ%:z)
 
   if [ "${LOG_FORMAT}" == "json" ]; then
-    PID${$}
+    PID=${$}
     HOST=$(cat /proc/sys/kernel/hostname)
     PROCESSNAME=$(cat /proc/$$/comm)
     USERNAME=$(cat /proc/${PID}/loginuid)
